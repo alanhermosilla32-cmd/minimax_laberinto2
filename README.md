@@ -9,3 +9,7 @@ Proyecto de práctica para aprender:
 
 Estado actual:
 Tablero funcional y cálculo de movimientos básicos.
+- Gato y ratón colocados
+- Función que calcula movimientos posibles
+- Ratón se mueve automáticamente en un bucle
+- Proyecto versionado y subido a GitHub
