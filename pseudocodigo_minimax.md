@@ -4,9 +4,14 @@ A continuación, se presenta la lógica del programa explicada en español simpl
 
 ---
 
-## 1. Reglas Generales y Movimiento
+## 1. Módulos y Reglas Generales
 
 ```text
+IMPORTAR MÓDULO "Aleatoriedad" (Para posicionar el queso)
+IMPORTAR MÓDULO "Matemáticas"  (Para usar números infinitos en Minimax)
+IMPORTAR MÓDULO "Tiempo"       (Para pausar la animación)
+IMPORTAR MÓDULO "Sistema"      (Para limpiar la consola)
+
 CONSTANTE Tamaño_Tablero = 5
 CONSTANTE Profundidad_Vision_Futura = 8
 
