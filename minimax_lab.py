@@ -1,5 +1,7 @@
 import random
 import math
+import time
+import os
 
 TAMANO = 5
 PROFUNDIDAD = 8
@@ -103,61 +105,70 @@ def imprimir_tablero(gato, raton, queso):
     print()
 
 
-# ---- JUEGO ----
+# ---- JUEGO (MODO ESPECTADOR INFINITO) ----
 
-gato = [0, 0]
-raton = [TAMANO - 1, TAMANO - 1]
-
-# Elegir una posición aleatoria para el queso, que no sea ni donde empieza el gato ni el raton
-queso = [random.randint(0, TAMANO - 1), random.randint(0, TAMANO - 1)]
-while queso == gato or queso == raton:
-    queso = [random.randint(0, TAMANO - 1), random.randint(0, TAMANO - 1)]
-
-print(f"Posición inicial: Gato {gato}, Ratón {raton}, Queso {queso}")
-imprimir_tablero(gato, raton, queso)
-
-for turno in range(50):
-
-    # RATÓN (inteligente buscando el queso, pero tratando de alejarse del gato)
-    movs_r = movimientos_posibles(raton)
-    # Intentará minimizar su distancia al queso, maximizando la distancia al gato
-    mejor_puntuacion_r = -math.inf
-    mejor_mov_r = raton
-
-    for mov in movs_r:
-        dist_gato = distancia(gato, mov)
-        dist_queso = distancia(queso, mov)
-        
-        # Ponderación sencilla: Acercarse al queso es más importante (x2) que huir, 
-        # a menos que el gato esté amenazando (adyacente)
-        puntuacion = (dist_gato * 1) - (dist_queso * 2) 
-
-        # Si el gato estuviese en el siguiente paso o en este paso, es una pésima jugada
-        if dist_gato <= 1:
-            puntuacion -= 1000
-
-        if puntuacion > mejor_puntuacion_r:
-            mejor_puntuacion_r = puntuacion
-            mejor_mov_r = mov
-
-    raton = mejor_mov_r
-
-    if gato == raton:
-        imprimir_tablero(gato, raton, queso)
-        print("¡El Gato atrapó al Ratón y ganó la partida!")
-        break
+while True:
+    os.system('cls' if os.name == 'nt' else 'clear')
     
-    if raton == queso:
-        imprimir_tablero(gato, raton, queso)
-        print("¡El Ratón llegó al Queso y ganó la partida!")
-        break
+    gato = [0, 0]
+    raton = [TAMANO - 1, TAMANO - 1]
 
-    # GATO (Minimax real)
-    gato = mejor_movimiento_minimax(gato, raton, queso)
+    # Elegir una posición aleatoria para el queso, que no sea ni donde empieza el gato ni el raton
+    queso = [random.randint(0, TAMANO - 1), random.randint(0, TAMANO - 1)]
+    while queso == gato or queso == raton:
+        queso = [random.randint(0, TAMANO - 1), random.randint(0, TAMANO - 1)]
 
+    print("=== NUEVA PARTIDA ===")
+    print(f"Gato {gato} | Ratón {raton} | Queso {queso}\n")
     imprimir_tablero(gato, raton, queso)
+    time.sleep(1) # Pausa inicial antes de empezar a moverse
 
-    if gato == raton:
-        print("¡El Gato atrapó al Ratón y ganó la partida!")
-        break
+    for turno in range(50):
+        # Limpiar pantalla para dar efecto de animación
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"--- TURNO {turno + 1} ---")
+
+        # RATÓN (inteligente buscando el queso, pero tratando de alejarse del gato)
+        movs_r = movimientos_posibles(raton)
+        mejor_puntuacion_r = -math.inf
+        mejor_mov_r = raton
+
+        for mov in movs_r:
+            dist_gato = distancia(gato, mov)
+            dist_queso = distancia(queso, mov)
+            
+            puntuacion = (dist_gato * 1) - (dist_queso * 2) 
+
+            if dist_gato <= 1:
+                puntuacion -= 1000
+
+            if puntuacion > mejor_puntuacion_r:
+                mejor_puntuacion_r = puntuacion
+                mejor_mov_r = mov
+
+        raton = mejor_mov_r
+
+        if raton == queso:
+            imprimir_tablero(gato, raton, queso)
+            print("¡El Ratón llegó al Queso y ganó la partida!")
+            break
+            
+        if gato == raton:
+            imprimir_tablero(gato, raton, queso)
+            print("¡El Gato atrapó al Ratón y ganó la partida!")
+            break
+
+        # GATO (Minimax real)
+        gato = mejor_movimiento_minimax(gato, raton, queso)
+
+        imprimir_tablero(gato, raton, queso)
+
+        if gato == raton:
+            print("¡El Gato atrapó al Ratón y ganó la partida!")
+            break
+            
+        time.sleep(0.5) # Pausa de medio segundo para ver la animación
+        
+    print("\nReiniciando en 3 segundos...")
+    time.sleep(3)
 
