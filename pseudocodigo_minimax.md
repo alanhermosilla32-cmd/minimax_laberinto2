@@ -91,28 +91,56 @@ FUNCIÓN Decidir_Siguiente_Paso_Gato( Gato, Ratón, Queso ):
 ## 3. Lógica Principal (El Bucle del Juego)
 
 ```text
-Configurar Posición_Gato en esquina superior izquierda
-Configurar Posición_Ratón en esquina inferior derecha
-Colocar_Queso_Al_Azar()
+REPETIR INFINITAMENTE (Para Modo Espectador Animado):
 
-REPETIR POR 50 TURNOS:
+    Limpiar_Pantalla_De_Consola()
     
-    # --- TURNO DEL RATÓN ---
-    # El ratón usa heurística simple para acercarse al queso y alejarse del gato
-    Mejor_Plan = Quedarse_Quieto
-    PARA CADA Movimiento_Posible DEL Ratón:
-        SI ir hacia allá me acerca al queso MÁS de lo que me acerca al gato:
-            Mejor_Plan = Ese_Movimiento
-            
-    Posición_Ratón = Mejor_Plan
-    
-    Comprobar_Reglas_De_Victoria()
-    
-    # --- TURNO DEL GATO ---
-    # El gato invoca todo el cerebro de la inteligencia artificial
-    Posición_Gato = Decidir_Siguiente_Paso_Gato( Posición_Gato, Posición_Ratón, Queso )
-    
-    Comprobar_Reglas_De_Victoria()
+    Configurar Posición_Gato en esquina superior izquierda
+    Configurar Posición_Ratón en esquina inferior derecha
+    Colocar_Queso_Al_Azar()
     
     Dibujar_Tablero_En_Pantalla()
+    Esperar( 1 Segundo )
+
+    REPETIR POR 50 TURNOS MÁXIMO (Una Partida Normal):
+        
+        Limpiar_Pantalla_De_Consola()
+        
+        # --- TURNO DEL RATÓN ---
+        # El ratón usa heurística simple para acercarse al queso y alejarse del gato
+        Mejor_Plan = Quedarse_Quieto
+        Mejor_Puntuacion = -Infinito
+        
+        PARA CADA Movimiento_Posible DEL Ratón:
+            Puntuacion = (Acercarme_Al_Queso * 2) - (Acercarme_Al_Gato * 1)
+            SI Gato_Me_Come_En_Ese_Movimiento:
+                Puntuacion = Puntuacion - 1000
+                
+            SI Puntuacion es mayor a Mejor_Puntuacion:
+                Mejor_Puntuacion = Puntuacion
+                Mejor_Plan = Ese_Movimiento
+                
+        Posición_Ratón = Mejor_Plan
+        
+        SI Ratón_Llegó_Al_Queso O Gato_Atrapó_Al_Ratón:
+            Dibujar_Tablero()
+            Anunciar_Ganador()
+            Terminar_Partida() # Rompe este bucle de 50 turnos
+        
+        # --- TURNO DEL GATO ---
+        # El gato invoca todo el cerebro de la inteligencia artificial (Minimax)
+        Posición_Gato = Decidir_Siguiente_Paso_Gato( Posición_Gato, Posición_Ratón, Queso )
+        
+        Dibujar_Tablero_En_Pantalla()
+        
+        SI Gato_Atrapó_Al_Ratón:
+            Anunciar_Ganador()
+            Terminar_Partida() # Rompe este bucle de 50 turnos
+            
+        Esperar( 0.5 Segundos ) # Da efecto de animación fluida
+
+    # Cuando alguien gana, se acaba la partida...
+    Mensaje("Reiniciando en 3 segundos...")
+    Esperar( 3 Segundos )
+    # ...y el bucle infinito vuelve a empezar una nueva partida arriba.
 ```
